@@ -18,6 +18,8 @@ func RegisterHandlers(routerGroup *server.Router, srv services.Service) {
 	routerGroup.POST("/users", c.createUser)
 	routerGroup.POST("/login", c.login)
 
-	// protected routes
+	routerGroup.POST("/upload", c.uploadFile, middlewares.IsAuthenticated)
+	routerGroup.GET("/download", c.downloadFile, middlewares.IsAuthenticated)
+
 	routerGroup.GET("/me", c.getCurrentUser, middlewares.IsAuthenticated)
 }

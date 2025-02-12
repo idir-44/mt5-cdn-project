@@ -1,7 +1,22 @@
+version: '3.8'
+
 services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./docker/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - server
+    networks:
+      - mynet
+
   server:
     depends_on:
       - db
+      - redis
+      - mongodb
     build:
       context: ..
       dockerfile: docker/Dockerfile
@@ -17,15 +32,17 @@ services:
     env_file:
       - ../.env
     deploy:
+      replicas: 3
       restart_policy:
         condition: on-failure
+
   db:
-    image: "postgres:alpine"
+    image: postgres:alpine
     restart: always
     environment:
-      POSTGRES_USER: "postgres"
-      POSTGRES_PASSWORD: "postgres"
-      POSTGRES_DB: "mydb"
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: mydb
     networks:
       - mynet
     healthcheck:
@@ -35,6 +52,25 @@ services:
       retries: 5
     ports:
       - "5432:5432"
+
+  redis:
+    image: redis:alpine
+    restart: always
+    networks:
+      - mynet
+    ports:
+      - "6379:6379"
+
+  mongodb:
+    image: mongo:latest
+    restart: always
+    networks:
+      - mynet
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
 
 networks:
   mynet:

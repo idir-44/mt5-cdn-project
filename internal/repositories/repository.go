@@ -17,4 +17,8 @@ type Repository interface {
 	CreateUser(user models.User) (models.User, error)
 	GetUserByEmail(email string) (models.User, error)
 	GetUser(id string) (models.User, error)
+
+	UploadFile(file models.File) (models.File, error)
+	GetFileByID(id string) (models.File, error)
+	DeleteFile(id string) error
 }
