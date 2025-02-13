@@ -1,6 +1,9 @@
 package controllers
 
-import _ "fmt"
+import (
+	"fmt"
+	_ "fmt"
+)
 
 import (
 	"github.com/idir-44/mt5-cdn-project/internal/middlewares"
@@ -63,6 +66,7 @@ func (r controller) uploadFile(c echo.Context) error {
 // Téléchargement de fichier
 func (r controller) downloadFile(c echo.Context) error {
 	fileID := c.QueryParam("id")
+	fmt.Println("File Id is : ", fileID)
 
 	file, err := r.service.GetFileByID(fileID)
 	if err != nil {

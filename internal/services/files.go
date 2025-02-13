@@ -8,7 +8,7 @@ func (s service) UploadFile(req models.File) (models.File, error) {
 	return s.repository.UploadFile(req)
 }
 
-func (s service) GetFile(id string) (models.File, error) {
+func (s service) GetFileByID(id string) (models.File, error) {
 	return s.repository.GetFileByID(id)
 }
 

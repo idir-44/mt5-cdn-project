@@ -1,0 +1,83 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.21
+
+      - name: Install Dependencies
+        run: go mod tidy
+
+      - name: Build Application
+        run: go build -o server ./cmd/server
+
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.21
+
+      - name: Install Dependencies
+        run: go mod tidy
+
+      - name: Run Tests
+        run: go test ./tests/... -v -cover
+
+  docker:
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Log in to DockerHub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Build Docker Image
+        run: docker build -t myorg/mt5-cdn:latest .
+
+      - name: Push Docker Image
+        run: docker push myorg/mt5-cdn:latest
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: docker
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Set up Kubernetes
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'latest'
+
+      - name: Deploy to Kubernetes
+        run: |
+          kubectl apply -f k8s/deployment.yaml
+          kubectl apply -f k8s/service.yaml
+          kubectl apply -f k8s/ingress.yaml

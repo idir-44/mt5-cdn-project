@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mt5-cdn-deployment
+  labels:
+    app: mt5-cdn
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: mt5-cdn
+  template:
+    metadata:
+      labels:
+        app: mt5-cdn
+    spec:
+      containers:
+        - name: mt5-cdn
+          image: mt5-cdn:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: PGUSER
+              value: "postgres"
+            - name: PGHOST
+              value: "db"
+            - name: PGPORT
+              value: "5432"
+            - name: PGDATABASE
+              value: "mydb"
+            - name: PGPASSWORD
+              value: "postgres"
+            - name: REDIS_HOST
+              value: "redis"
+            - name: JWT_SECRET
+              value: "local"
+          volumeMounts:
+            - name: uploads
+              mountPath: /app/uploads
+      volumes:
+        - name: uploads
+          emptyDir: {}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: uploads-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
