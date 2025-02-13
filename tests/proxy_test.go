@@ -8,7 +8,7 @@ import (
 )
 
 func TestProxyHealth(t *testing.T) {
-	resp, err := http.Get("http://localhost:8080/health")
+	resp, err := http.Get("http://localhost/healthcheck")
 	assert.NoError(t, err)
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 }

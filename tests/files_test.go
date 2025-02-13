@@ -11,17 +11,13 @@ import (
 )
 
 func TestUploadFile(t *testing.T) {
-	// ✅ Initialisation de la base de données en mémoire pour le test
 	db, err := database.Connect()
-	if err != nil {
-		t.Fatalf("failed to connect to database: %s", err)
-	}
+	assert.NoError(t, err)
 	defer db.Close()
 
 	repo := repositories.NewRepository(db)
 
 	file := models.File{
-		ID:        "1234",
 		UserID:    "5678",
 		Filename:  "testfile.txt",
 		Filepath:  "/files/testfile.txt",
@@ -30,8 +26,7 @@ func TestUploadFile(t *testing.T) {
 		UpdatedAt: time.Now(),
 	}
 
-	// ✅ Test de l'upload d'un fichier
 	uploadedFile, err := repo.UploadFile(file)
-	assert.NoError(t, err, "L'upload du fichier a échoué")
-	assert.Equal(t, file.Filename, uploadedFile.Filename, "Les noms de fichiers ne correspondent pas")
+	assert.NoError(t, err)
+	assert.Equal(t, file.Filename, uploadedFile.Filename)
 }
