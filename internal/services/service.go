@@ -16,4 +16,8 @@ func NewService(repo repositories.Repository) Service {
 type Service interface {
 	CreateUser(req models.CreateUserReqesut) (models.User, error)
 	Login(req models.LoginRequest) (models.User, string, error)
+
+	UploadFile(req models.File) (models.File, error)
+	GetFileByID(id string) (models.File, error)
+	DeleteFile(id string) error
 }

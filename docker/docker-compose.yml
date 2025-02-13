@@ -1,31 +1,101 @@
+version: '3.8'
+
 services:
-  server:
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - "/Users/abalimohammedamine/Documents/mt5-cdn-project/docker/nginx.conf:/etc/nginx/nginx.conf"
     depends_on:
-      - db
+      server-1:
+        condition: service_healthy
+      server-2:
+        condition: service_healthy
+      server-3:
+        condition: service_healthy
+    networks:
+      - mynet
+
+  server-1:
+    container_name: server-1
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      mongodb:
+        condition: service_started
     build:
       context: ..
       dockerfile: docker/Dockerfile
-    hostname: rest-server
-    volumes:
-      - ../cmd:/app/cmd
-      - ../pkg:/app/pkg
-      - ../internal:/app/internal
     networks:
       - mynet
-    ports:
-      - "8080:8080"
+    expose:
+      - "8080"
     env_file:
       - ../.env
-    deploy:
-      restart_policy:
-        condition: on-failure
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/healthcheck"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  server-2:
+    container_name: server-2
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      mongodb:
+        condition: service_started
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    networks:
+      - mynet
+    expose:
+      - "8080"
+    env_file:
+      - ../.env
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/healthcheck"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  server-3:
+    container_name: server-3
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      mongodb:
+        condition: service_started
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    networks:
+      - mynet
+    expose:
+      - "8080"
+    env_file:
+      - ../.env
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/healthcheck"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
   db:
-    image: "postgres:alpine"
+    image: postgres:alpine
     restart: always
     environment:
-      POSTGRES_USER: "postgres"
-      POSTGRES_PASSWORD: "postgres"
-      POSTGRES_DB: "mydb"
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: mydb
     networks:
       - mynet
     healthcheck:
@@ -35,6 +105,25 @@ services:
       retries: 5
     ports:
       - "5432:5432"
+
+  redis:
+    image: redis:alpine
+    restart: always
+    networks:
+      - mynet
+    expose:
+      - "6379"
+
+  mongodb:
+    image: mongo:latest
+    restart: always
+    networks:
+      - mynet
+    expose:
+      - "27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
 
 networks:
   mynet:

@@ -14,7 +14,6 @@ import (
 
 func main() {
 	srv := server.New(server.Config{Port: 8080})
-
 	db, err := database.Connect()
 	if err != nil {
 		log.Fatalf("failed to init store: %s", err)
@@ -35,6 +34,10 @@ func main() {
 	}
 
 	fmt.Println(string(data))
+
+	for _, route := range srv.Router.Routes() {
+		fmt.Printf("Route enregistrée : %s %s\n", route.Method, route.Path)
+	}
 
 	srv.Run()
 }

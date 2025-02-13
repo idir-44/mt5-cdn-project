@@ -27,5 +27,9 @@ func (r controller) login(c echo.Context) error {
 	cookie.HttpOnly = true
 	c.SetCookie(cookie)
 
-	return c.JSON(http.StatusOK, user)
+	return c.JSON(http.StatusOK, map[string]string{
+		"id":    user.ID,
+		"email": user.Email,
+		"token": token,
+	})
 }
