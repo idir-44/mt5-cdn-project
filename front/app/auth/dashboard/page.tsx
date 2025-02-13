@@ -16,7 +16,10 @@ export default function Dashboard() {
   const router = useRouter();
 
   useEffect(() => {
-    fetch("/api/auth/me")
+    fetch("http://localhost:8080/v1/me", {
+      method: "GET",
+      credentials: "include",
+    })
       .then((res) => res.json())
       .then((data) => {
         if (!data.authenticated) {
@@ -28,7 +31,7 @@ export default function Dashboard() {
   }, [router]);
 
   const handleLogout = async () => {
-    await fetch("/api/auth/logout", { method: "POST" });
+    await fetch("/api/auth/logout", { method: "POST", credentials: "include" });
     router.push("/auth/login");
   };
 
@@ -47,9 +50,10 @@ export default function Dashboard() {
     const formData = new FormData();
     formData.append("file", selectedFile);
 
-    const response = await fetch("/api/upload", {
+    const response = await fetch("http://localhost:8080/v1/upload", {
       method: "POST",
       body: formData,
+      credentials: "include",
     });
 
     if (response.ok) {
@@ -69,14 +73,24 @@ export default function Dashboard() {
         <CardContent className="p-6 space-y-4">
           <div className="border-2 border-dashed border-gray-200 rounded-lg flex flex-col gap-1 p-6 items-center">
             <FileIcon className="w-12 h-12" />
-            <span className="text-sm font-medium text-gray-500">Drag and drop a file or click to browse</span>
-            <span className="text-xs text-gray-500">PDF, image, video, or audio</span>
+            <span className="text-sm font-medium text-gray-500">
+              Drag and drop a file or click to browse
+            </span>
+            <span className="text-xs text-gray-500">
+              PDF, image, video, or audio
+            </span>
           </div>
           <div className="space-y-2 text-sm">
             <Label htmlFor="file" className="text-sm font-medium">
               File
             </Label>
-            <Input id="file" type="file" placeholder="File" accept="image/*" onChange={handleFileChange} />
+            <Input
+              id="file"
+              type="file"
+              placeholder="File"
+              accept="image/*"
+              onChange={handleFileChange}
+            />
           </div>
         </CardContent>
         <CardFooter>
@@ -85,10 +99,15 @@ export default function Dashboard() {
           </Button>
         </CardFooter>
       </Card>
-      {uploadMessage && <p className="text-sm text-gray-700">{uploadMessage}</p>}
+      {uploadMessage && (
+        <p className="text-sm text-gray-700">{uploadMessage}</p>
+      )}
 
       {/* Bouton de déconnexion */}
-      <button onClick={handleLogout} className="mt-4 px-4 py-2 bg-red-500 text-white rounded">
+      <button
+        onClick={handleLogout}
+        className="mt-4 px-4 py-2 bg-red-500 text-white rounded"
+      >
         Déconnexion
       </button>
     </div>

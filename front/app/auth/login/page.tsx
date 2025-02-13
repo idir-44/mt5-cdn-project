@@ -1,6 +1,5 @@
-import { GalleryVerticalEnd } from "lucide-react"
-import ThemeToggle from "@/components/ThemeToggle"
-import { LoginForm } from "@/components/login-form"
+import ThemeToggle from "@/components/ThemeToggle";
+import { LoginForm } from "@/components/login-form";
 
 export default function LoginPage() {
   return (
@@ -8,7 +7,6 @@ export default function LoginPage() {
       <div className="flex flex-col gap-4 p-6 md:p-10">
         <div className="flex justify-center gap-2 md:justify-start">
           <a href="#" className="flex items-center gap-2 font-medium">
-            
             <ThemeToggle />
           </a>
         </div>
@@ -26,5 +24,5 @@ export default function LoginPage() {
         />
       </div>
     </div>
-  )
+  );
 }
