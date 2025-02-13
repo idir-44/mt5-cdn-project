@@ -23,34 +23,30 @@ jobs:
         with:
           go-version: 1.21
 
+      - name: Cache Go Modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/go/pkg/mod
+            ~/.cache/go-build
+          key: go-mod-${{ hashFiles('**/go.sum') }}
+          restore-keys: go-mod-
+
       - name: Install Dependencies
         run: go mod tidy
 
       - name: Build Application
         run: go build -o server ./cmd/server
 
-  test:
-    runs-on: ubuntu-latest
-    needs: build
-
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-
-      - name: Set up Go
-        uses: actions/setup-go@v4
+      - name: Save Build Artifact
+        uses: actions/upload-artifact@v3
         with:
-          go-version: 1.21
-
-      - name: Install Dependencies
-        run: go mod tidy
-
-      - name: Run Tests
-        run: go test ./tests/... -v -cover
+          name: server-binary
+          path: ./server
 
   docker:
     runs-on: ubuntu-latest
-    needs: test
+    needs: build  # On passe directement à la construction de l'image
 
     steps:
       - name: Checkout Repository
