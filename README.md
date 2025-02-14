@@ -130,7 +130,8 @@ curl -X GET http://localhost/metrics
 ✔️ **Affichage dynamique des fichiers et historique des téléchargements**  
 ✔️ **Monitoring avec Prometheus (métriques HTTP)** *(branch `add-grafana-and-prometheus`)*  
 ✔️ **Visualisation des métriques dans Grafana** *(branch `add-grafana-and-prometheus`)*  
-✔️ **Reverse Proxy et Load Balancing avec Nginx**  
+✔️ **Reverse Proxy et Load Balancing avec Nginx** 
+✔️ **Cache avec Redis**   
 
 
 
