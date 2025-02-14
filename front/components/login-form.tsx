@@ -1,10 +1,11 @@
+"use client";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { FormEvent, useState } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 export function LoginForm({
   className,
@@ -20,12 +21,13 @@ export function LoginForm({
     setError(null);
 
     try {
-      const response = await fetch("http://localhost:8080/v1/login", {
+      const response = await fetch("http://localhost:80/v1/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ email, password }),
+        credentials: "include",
       });
 
       if (!response.ok) {
@@ -34,7 +36,7 @@ export function LoginForm({
 
       const data = await response.json();
       if (data) {
-        router.push("auth/dashboard");
+        router.push("/auth/dashboard");
       }
     } catch (err) {
       setError((err as Error).message);

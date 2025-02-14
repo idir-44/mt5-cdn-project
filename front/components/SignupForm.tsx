@@ -1,9 +1,10 @@
+"use client";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 interface SignupFormProps extends React.ComponentPropsWithoutRef<"form"> {}
 
@@ -30,7 +31,7 @@ export function SignupForm({ className, ...props }: SignupFormProps) {
     }
 
     try {
-      const response = await fetch("/api/auth/signup", {
+      const response = await fetch("http://localhost:80/v1/users", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

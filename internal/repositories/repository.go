@@ -21,4 +21,5 @@ type Repository interface {
 	UploadFile(file models.File) (models.File, error)
 	GetFileByID(id string) (models.File, error)
 	DeleteFile(id string) error
+	ListFiles(folder string) ([]models.File, error) // ✅ Ajout
 }
