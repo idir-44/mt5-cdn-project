@@ -20,4 +20,5 @@ type Service interface {
 	UploadFile(req models.File) (models.File, error)
 	GetFileByID(id string) (models.File, error)
 	DeleteFile(id string) error
+	ListFiles(folderPath string) ([]models.File, error)
 }

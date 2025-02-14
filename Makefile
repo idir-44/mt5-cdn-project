@@ -1,6 +1,5 @@
-
 DOCKER_COMPOSE=docker compose -f docker/docker-compose.yml
-container_name=docker-server-1
+container_name=server-1
 DOCKER_EXEC=docker exec -it ${container_name}
 
 start:
@@ -15,7 +14,7 @@ restart:
 	${DOCKER_COMPOSE} restart
 
 livereload:
-	git ls-files | entr -c -r -s 'make restart; docker logs -f docker-server-1'
+	git ls-files | entr -c -r -s 'make restart; docker logs -f ${container_name}'
 
 migration-init:
 	${DOCKER_EXEC} go run ./cmd/migrate/main.go db init

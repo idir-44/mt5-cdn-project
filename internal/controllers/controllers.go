@@ -22,4 +22,8 @@ func RegisterHandlers(routerGroup *server.Router, srv services.Service) {
 	routerGroup.GET("/download", c.downloadFile, middlewares.IsAuthenticated)
 
 	routerGroup.GET("/me", c.getCurrentUser, middlewares.IsAuthenticated)
+
+	// ✅ Ajout des routes manquantes
+	routerGroup.GET("/files", c.listFiles, middlewares.IsAuthenticated)                // Liste les fichiers d'un dossier
+	routerGroup.GET("/download-folder", c.downloadFolder, middlewares.IsAuthenticated) // Télécharge un dossier en ZIP
 }

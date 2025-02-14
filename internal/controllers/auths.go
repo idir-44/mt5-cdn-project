@@ -25,6 +25,8 @@ func (r controller) login(c echo.Context) error {
 	cookie.Value = token
 	cookie.Expires = time.Now().Add(24 * time.Hour)
 	cookie.HttpOnly = true
+	cookie.SameSite = http.SameSiteNoneMode
+	cookie.Secure = false
 	c.SetCookie(cookie)
 
 	return c.JSON(http.StatusOK, map[string]string{
