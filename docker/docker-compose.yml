@@ -131,6 +131,24 @@ services:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
 
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - "./prometheus.yml:/etc/prometheus/prometheus.yml"
+    ports:
+      - "9090:9090"
+    networks:
+      - mynet
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3030:3030"
+    depends_on:
+      - prometheus
+    networks:
+      - mynet
+
 volumes:
   shared_files:
     driver: local

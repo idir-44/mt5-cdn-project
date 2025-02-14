@@ -7,13 +7,13 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/idir-44/mt5-cdn-project/internal/middlewares"
 	"github.com/idir-44/mt5-cdn-project/internal/models"
 	"github.com/labstack/echo/v4"
 )
 
-// ✅ Upload multiple fichiers et dossiers
 func (r controller) uploadFile(c echo.Context) error {
 	form, err := c.MultipartForm()
 	if err != nil {
@@ -105,6 +105,28 @@ func (r controller) downloadFolder(c echo.Context) error {
 	return c.File(zipPath)
 }
 
+func (r controller) deleteFileOrFolder(c echo.Context) error {
+	path := c.QueryParam("path")
+	absolutePath := filepath.Join("uploads", path)
+
+	info, err := os.Stat(absolutePath)
+	if os.IsNotExist(err) {
+		return c.JSON(http.StatusNotFound, map[string]string{"message": "Fichier ou dossier introuvable"})
+	}
+
+	if info.IsDir() {
+		err = os.RemoveAll(absolutePath)
+	} else {
+		err = os.Remove(absolutePath)
+	}
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": "Erreur lors de la suppression"})
+	}
+
+	return c.JSON(http.StatusOK, map[string]string{"message": "Suppression réussie"})
+}
+
 func zipFolder(source, target string) error {
 	zipFile, err := os.Create(target)
 	if err != nil {
@@ -122,7 +144,7 @@ func zipFolder(source, target string) error {
 		}
 
 		relativePath, _ := filepath.Rel(source, path)
-		depth := len(filepath.SplitList(relativePath))
+		depth := strings.Count(relativePath, string(os.PathSeparator))
 		if depth > 10 {
 			fmt.Println("⚠️ Ignoré: trop profond:", relativePath)
 			return nil
